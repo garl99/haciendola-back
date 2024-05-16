@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { FindOptions } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
 
 export interface BaseRepositoryInterface<T> {
   findAll(): Promise<T[]>;
   findById(id: number): Promise<T | null>;
+  findOne(options: FindOptions): Promise<T | null>;
   create(data: Partial<T>): Promise<T>;
   update(id: number, data: Partial<T>): Promise<[number, T[]]>;
   delete(id: number): Promise<number>;
@@ -21,6 +23,10 @@ export class BaseRepository<T extends Model<T>>
 
   async findById(id: number): Promise<T | null> {
     return this.model.findByPk(id);
+  }
+
+  async findOne(options: FindOptions): Promise<T | null> {
+    return this.model.findOne(options);
   }
 
   async create(data: Partial<T>): Promise<T> {

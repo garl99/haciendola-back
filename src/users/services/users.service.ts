@@ -26,4 +26,13 @@ export class UserService {
   async delete(id: number): Promise<number> {
     return this.userRepository.delete(id);
   }
+
+  async findOne(data: any): Promise<User> {
+    const options = {
+      where: {
+        ...data,
+      },
+    };
+    return this.userRepository.findOne(options);
+  }
 }
