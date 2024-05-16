@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/database/entities/users/user.entity';
 import { UserService } from 'src/users/services/users.service';
+import { compare, encodePassword } from 'src/utils/bcrypt';
 import { SignUpDto } from '../dtos/SignDto';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class AuthService {
     private usersService: UserService,
     private jwtService: JwtService,
   ) {}
+
   async signIn(
     username: string,
     pass: string,
@@ -21,7 +23,8 @@ export class AuthService {
     const user = await this.usersService.findOne({ username });
 
     if (user) {
-      if (user?.password !== pass) {
+      const matched = compare(pass, user?.password);
+      if (!matched) {
         throw new UnauthorizedException();
       }
       const payload = { sub: user.id, username: user.username };
@@ -43,7 +46,11 @@ export class AuthService {
         code: 400,
       });
     }
-    const user = this.usersService.create(payload);
+
+    const user = this.usersService.create({
+      ...payload,
+      password: encodePassword(payload.password),
+    });
 
     return user;
   }
