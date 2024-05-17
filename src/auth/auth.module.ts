@@ -12,10 +12,11 @@ import { ConfigService } from '@nestjs/config';
     UsersModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {
-        const jwtKey =
-          process.env.JWT_KEY || configService.get<string>('JWT_KEY');
+        // const jwtKey =
+        //   process.env.JWT_KEY || configService.get<string>('JWT_KEY');
         return {
-          secret: jwtKey,
+          // secret: jwtKey,
+          secret: 'SECRET KEY VALUE FOR SIGN JWT TOKEN',
           signOptions: { expiresIn: '24h' },
         };
       },
